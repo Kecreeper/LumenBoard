@@ -5,26 +5,24 @@ from kmk.kmk_keyboard import KMKKeyboard
 from kmk.keys import KC
 from kmk.scanners import DiodeOrientation
 from kmk.modules.layers import Layers
-from kmk.extensions.media_keys import MediaKeys
 from kmk.modules.encoder import EncoderHandler
+from kmk.extensions.media_keys import MediaKeys
+from kmk.modules.mouse_keys import MouseKeys
 
 from adafruit_mcp230xx.mcp23017 import MCP23017
 i2c = busio.I2C(board.GP27, board.GP26)
 mcp = MCP23017(i2c)
 encoder_handler = EncoderHandler()
 encoder_handler.pins = (
-    # left encoder
-    (board.GP0,  board.GP1, None),
-    # right encoder
-    (board.GP14, board.GP15, None)
+    (board.GP0,  board.GP1, None), # left encoder
+    (board.GP14, board.GP15, None) # right encoder
 )
 
 keyboard = KMKKeyboard()
 keyboard.modules.append(Layers())
+keyboard.modules.append(MouseKeys())
 keyboard.modules.append(encoder_handler)
 keyboard.extensions.append(MediaKeys())
-
-
 
 keyboard.col_pins = (mcp.get_pin(0), mcp.get_pin(1), board.GP2, board.GP3, board.GP7, board.GP8, board.GP9, board.GP10, board.GP11, board.GP12, board.GP16, board.GP17, board.GP18, board.GP19, board.GP20, board.GP21, board.GP22, board.GP13)
 keyboard.row_pins = (mcp.get_pin(2), mcp.get_pin(3), mcp.get_pin(4), mcp.get_pin(5), mcp.get_pin(6), mcp.get_pin(7))
@@ -56,6 +54,17 @@ keyboard.keymap = [
         KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.NO,    KC.NO,    KC.NO,
         KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.NO,    KC.NO,    KC.TRNS,  KC.NO,    KC.NO,    KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,  KC.TRNS,
    ]
+]
+
+LEncoder_A = KC.LCTL(KC.MW_UP)
+LEncoder_B = KC.LCTL(KC.MW_DOWN)
+
+REncoder_A = KC.LSFT(KC.MW_UP)
+REncoder_B = KC.LSFT(KC.MW_DOWN)
+
+encoder_handler.map = [
+    ( (LEncoder_A, LEncoder_B, KC.NO), (REncoder_A, REncoder_B, KC.NO) ),
+    ( (LEncoder_A, LEncoder_B, KC.NO), (REncoder_A, REncoder_B, KC.NO) ), # temporary
 ]
 
 if __name__ == '__main__':
